@@ -1,0 +1,52 @@
+#Name- Garima Samraik
+#Data Science and Business Analytics Internship - The Sparks Foundation
+#Task - 1
+#Date - 15/09/2021
+
+#Title- Predicting the Percentage of a student based on the number of hours they study
+#Question- What will be the percentage of a student if they study for 9.25 hours a day?
+  
+#Installing various packages required for this analysis.
+install.packages("Rtools")
+install.packages("readr")
+install.packages("dplyr")
+install.packages("ggplot2")
+
+#Reading the packages required for this analysis.
+library(readr)
+library(dplyr)
+library("ggplot2")
+
+#Importing the Hours v/s Scores dataset from source file.
+#Let data of students be called data_s.
+getwd()
+data_s <- read.csv(file = "GRIP_Task_1.txt", sep = ",")
+head(data_s)
+summary(data_s)
+
+#Making a scatterplot to show the relationship between Study Hours and Scores of students.
+ggplot(data = data_s) + 
+      geom_point(mapping = aes(x = Hours, y = Scores), colour = "purple" )) + 
+  labs(title = "Study Hours v/s Scores")
+
+#To show the linear relationship between these variables, we use linear regression.
+ggplot(data = data_s,
+       aes( x = Hours, y = Scores)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE)
+
+#Calculating the coefficients of the data using linear regression.
+data_lm_fit <- lm(Scores ~ Hours, data = data_s)
+summary(data_lm_fit)
+#Coefficient 1 is the intercept and coefficient 2 is the slope.
+
+#Predicting the score.
+data_s <- data_s %>% 
+  mutate(perc_predictions = fitted(data_lm_fit))
+head(data_s)
+
+#Using the equation of linear regression line i.e y = B1 + B2x, we get:
+Score <- coef(data_lm_fit)[[1]] + coef(data_lm_fit)[[2]] * 9.25
+Score
+
+#The predictive score if a student studies for 9.25c= hours a day is 92.90985.
